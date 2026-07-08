@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --surface: #fcfcfb;
+  --page: #f9f9f7;
+  --ink-primary: #0b0b0b;
+  --ink-secondary: #52514e;
+  --ink-muted: #898781;
+  --grid: #e1e0d9;
+  --border: rgba(11, 11, 11, 0.1);
+
+  /* sequential blue ramp, validated ordinal (light) for scores 2/3/4 */
+  --score-2: #86b6ef;
+  --score-3: #3987e5;
+  --score-4: #0d366b;
+  --score-2-ink: #0b0b0b;
+  --score-3-ink: #ffffff;
+  --score-4-ink: #ffffff;
+
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--page);
+  --color-foreground: var(--ink-primary);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --surface: #1a1a19;
+    --page: #0d0d0d;
+    --ink-primary: #ffffff;
+    --ink-secondary: #c3c2b7;
+    --ink-muted: #898781;
+    --grid: #2c2c2a;
+    --border: rgba(255, 255, 255, 0.1);
+
+    /* validated ordinal ramp for dark surface */
+    --score-2: #184f95;
+    --score-3: #2a78d6;
+    --score-4: #b7d3f6;
+    --score-2-ink: #ffffff;
+    --score-3-ink: #ffffff;
+    --score-4-ink: #0b0b0b;
+
+    --good: #0ca30c;
+    --warning: #fab219;
+    --serious: #ec835a;
+    --critical: #d03b3b;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--ink-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
