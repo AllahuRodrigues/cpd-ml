@@ -8,7 +8,8 @@ export default function ReviewPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Manual Review List</h1>
         <p className="mt-1 max-w-3xl text-sm" style={{ color: "var(--ink-secondary)" }}>
-          {data.manualReview.length} country&times;theme cases where the CPD has a
+          {data.manualReview.length}{" "}
+          country&times;theme cases where the CPD has a
           dedicated outcome or output statement on the theme, but it is not tagged
           to a matching global IRRF Tier-2 indicator. These are the candidates for
           direct follow-up with country offices (per your supervisor&rsquo;s

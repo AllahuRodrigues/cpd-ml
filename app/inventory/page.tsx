@@ -8,7 +8,8 @@ export default function InventoryPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">CPD Inventory</h1>
         <p className="mt-1 max-w-3xl text-sm" style={{ color: "var(--ink-secondary)" }}>
-          {data.inventory.length} country programmes from the structured CPD
+          {data.inventory.length}{" "}
+          country programmes from the structured CPD
           outcome/output export. &ldquo;Status&rdquo; compares the CPD end date in
           the data against today ({data.generatedAt}) — an expired end date often
           means the CPD was extended or is mid-renewal, not that UNDP has no
