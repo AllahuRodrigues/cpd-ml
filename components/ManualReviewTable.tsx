@@ -32,6 +32,7 @@ export default function ManualReviewTable({
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          aria-label="Search country or code"
           placeholder="Search country or code…"
           className="rounded border px-3 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
@@ -39,6 +40,7 @@ export default function ManualReviewTable({
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
+          aria-label="Filter by theme"
           className="rounded border px-2 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         >

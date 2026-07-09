@@ -36,6 +36,7 @@ export default function ThemeMatrix({
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          aria-label="Search country or code"
           placeholder="Search country or code…"
           className="rounded border px-3 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}

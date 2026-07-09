@@ -54,6 +54,7 @@ export default function EvidenceExplorer({
         <select
           value={code}
           onChange={(e) => update(e.target.value, theme)}
+          aria-label="Filter evidence by country"
           className="rounded border px-2 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         >
@@ -67,6 +68,7 @@ export default function EvidenceExplorer({
         <select
           value={theme}
           onChange={(e) => update(code, e.target.value)}
+          aria-label="Filter evidence by theme"
           className="rounded border px-2 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         >

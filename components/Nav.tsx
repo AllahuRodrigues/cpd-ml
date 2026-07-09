@@ -24,13 +24,14 @@ export default function Nav() {
           <span className="text-sm font-semibold tracking-tight shrink-0">
             CPD &times; ROLSHR Theme Analysis
           </span>
-          <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <nav aria-label="Primary" className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
             {LINKS.map((l) => {
               const active = pathname === l.href;
               return (
                 <Link
                   key={l.href}
                   href={l.href}
+                  aria-current={active ? "page" : undefined}
                   className="rounded px-2 py-1 transition-colors"
                   style={{
                     color: active ? "var(--score-2-ink)" : "var(--ink-secondary)",

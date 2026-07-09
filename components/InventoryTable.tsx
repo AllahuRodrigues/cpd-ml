@@ -31,6 +31,7 @@ export default function InventoryTable({ items }: { items: InventoryItem[] }) {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          aria-label="Search country or code"
           placeholder="Search country or code…"
           className="rounded border px-3 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
@@ -38,6 +39,7 @@ export default function InventoryTable({ items }: { items: InventoryItem[] }) {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as StatusFilter)}
+          aria-label="Filter by CPD status"
           className="rounded border px-2 py-1.5 text-sm"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         >
