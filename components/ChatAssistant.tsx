@@ -31,12 +31,15 @@ const TOOL_LABELS: Record<string, string> = {
   list_manual_review: "checking the manual-review list",
 };
 
+type Engine = "llm" | "nlp" | null;
+
 export default function ChatAssistant() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [engine, setEngine] = useState<Engine>(null);
 
   const panelId = useId();
   const titleId = useId();
@@ -44,6 +47,22 @@ export default function ChatAssistant() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Learn which engine will answer (no Anthropic key -> local NLP, never an LLM call).
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/chat")
+      .then((r) => r.json())
+      .then((d: { engine?: Engine }) => {
+        if (!cancelled && (d.engine === "llm" || d.engine === "nlp")) setEngine(d.engine);
+      })
+      .catch(() => {
+        if (!cancelled) setEngine("nlp");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Focus the input when the panel opens.
   useEffect(() => {
@@ -209,7 +228,11 @@ export default function ChatAssistant() {
                 CPD Data Assistant
               </h2>
               <p className="text-xs" style={{ color: "var(--ink-muted)" }}>
-                Grounded in the 135-country analysis
+                {engine === "llm"
+                  ? "Claude Opus 4.8 · grounded in the 135-country dataset"
+                  : engine === "nlp"
+                    ? "Local NLP engine · no API key required · works offline"
+                    : "Grounded in the 135-country analysis"}
               </p>
             </div>
             <button
@@ -276,8 +299,9 @@ export default function ChatAssistant() {
               </button>
             </div>
             <p className="mt-1.5 text-[11px]" style={{ color: "var(--ink-muted)" }}>
-              Answers are generated from the structured dataset. Verify critical
-              figures against the tabs.
+              {engine === "nlp"
+                ? "Local NLP engine — parses your question and looks up exact data, no model call. Best with direct questions about a country, theme, or score."
+                : "Answers are generated from the structured dataset. Verify critical figures against the tabs."}
             </p>
           </form>
         </div>

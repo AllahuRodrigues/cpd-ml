@@ -38,11 +38,23 @@ export function toolOverview() {
   const totalCountries = data.inventory.length;
   const expired = data.inventory.filter((i) => i.status === "expired").length;
   const active = data.inventory.filter((i) => i.status === "active").length;
+  const noThemeMentionsCount = data.matrix.filter((r) =>
+    data.themeNames.every((t) => (r.scores[t] ?? 0) === 0)
+  ).length;
+  const anyScore3PlusCount = data.matrix.filter((r) =>
+    data.themeNames.some((t) => (r.scores[t] ?? 0) >= 3)
+  ).length;
+  const anyScore4Count = data.matrix.filter((r) =>
+    data.themeNames.some((t) => (r.scores[t] ?? 0) === 4)
+  ).length;
   return {
     generatedAt: data.generatedAt,
     totalCountries,
     active,
     expired,
+    noThemeMentionsCount,
+    anyScore3PlusCount,
+    anyScore4Count,
     themeNames: data.themeNames,
     layer3VerifiedCountries: Object.keys(data.layer3Verified),
     scoringRubric: {

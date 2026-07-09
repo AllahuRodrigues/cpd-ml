@@ -4,6 +4,7 @@ import {
   CHAT_SYSTEM_PROMPT,
   runTool,
 } from "@/lib/chat";
+import { answerLocally } from "@/lib/nlp";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,37 @@ type IncomingMessage = { role: "user" | "assistant"; content: string };
 
 function sse(obj: unknown): string {
   return `data: ${JSON.stringify(obj)}\n\n`;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Split text into small whitespace-preserving chunks for a streamed feel. */
+function* chunkText(text: string, wordsPerChunk = 4): Generator<string> {
+  const parts = text.split(/(\s+)/);
+  let buffer = "";
+  let words = 0;
+  for (const part of parts) {
+    buffer += part;
+    if (part.trim().length > 0) words++;
+    if (words >= wordsPerChunk) {
+      yield buffer;
+      buffer = "";
+      words = 0;
+    }
+  }
+  if (buffer) yield buffer;
+}
+
+/**
+ * GET /api/chat — lets the client know which engine will answer, so the UI
+ * can be honest about it (no Anthropic key configured -> local NLP only,
+ * no LLM call is ever made).
+ */
+export async function GET() {
+  const engine = process.env.ANTHROPIC_API_KEY ? "llm" : "nlp";
+  return Response.json({ engine, model: engine === "llm" ? MODEL : null });
 }
 
 export async function POST(request: Request) {
@@ -52,11 +84,26 @@ export async function POST(request: Request) {
         controller.enqueue(encoder.encode(sse(obj)));
 
       if (!apiKey) {
-        send({
-          type: "text",
-          text:
-            "The chat assistant isn't configured yet. Add an `ANTHROPIC_API_KEY` to `web/.env.local` and restart the dev server:\n\n```\nANTHROPIC_API_KEY=sk-ant-...\n```\n\nAll the dashboard tabs (Overview, Inventory, Theme Matrix, Evidence, IRRF Linkage Review, Manual Review List) work without a key — only this chat needs one.",
-        });
+        // No Anthropic key configured — answer with the local NLP harness.
+        // No network call, no LLM, fully deterministic against the dataset.
+        try {
+          const plainMessages = messages.map((m) => ({
+            role: m.role as "user" | "assistant",
+            content: typeof m.content === "string" ? m.content : "",
+          }));
+          const answer = answerLocally(plainMessages);
+          for (const name of answer.toolsUsed) send({ type: "tool", name });
+          if (answer.toolsUsed.length) await sleep(150);
+          for (const chunk of chunkText(answer.text)) {
+            send({ type: "text", text: chunk });
+            await sleep(18);
+          }
+        } catch (err) {
+          send({
+            type: "error",
+            message: `Local NLP engine failed: ${err instanceof Error ? err.message : String(err)}`,
+          });
+        }
         send({ type: "done" });
         controller.close();
         return;
